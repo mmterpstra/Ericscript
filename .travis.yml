@@ -1,0 +1,17 @@
+language: perl
+perl:
+  - "5.22.1"
+before_install:
+- sudo apt-get install -qq samtools
+- sudo apt-get install -qq bedtools
+- sudo apt-get install -qq libhts0
+- sudo apt-get install -qq r-base
+- sudo apt-get install -qq r-dev
+- sudo apt-get install -qq bwa
+- (set -e -x; wget 'https://github.com/samtools/samtools/releases/download/1.3.1/samtools-1.3.1.tar.bz2' &&  tar xf samtools-1.3.1.tar.bz2 && cd samtools-1.3.1/ && make && make prefix=/home/travis/ install )&& export PATH=/home/travis/bin/:$PATH
+- wget https://github.com/arq5x/bedtools2/releases/download/v2.26.0/bedtools-2.26.0.tar.gz && tar -zxvf bedtools-2.26.0.tar.gz && pushd bedtools2 && make && popd && export PATH=$PWD/bedtools2/bin/:$PWD/bedtools2/src/:$PATH
+- sudo Rscript -e 'install.packages(c("ada"))'
+- (wget http://genome-test.cse.ucsc.edu/~kent/exe/linux/blatSuite.36.zip && mkdir -p ~/bin && cd ~/bin && unzip $OLDPWD/blatSuite.36.zip) && export PATH=$PATH:~/bin
+- samtools || echo "Bad exit code $? but nothing wrong" &>2
+- bedtools --version || echo "Bad exit code $? but nothing wrong" &>2
+- export PERL5LIB="/usr/share/perl5":$PERL5LIB && cpanm --installdeps --notest . || (tail -n 5000 /home/travis/.cpanm/work/*/build.log && exit 1)
