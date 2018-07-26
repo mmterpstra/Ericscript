@@ -2,7 +2,7 @@
 
 toens <- function(ericscriptfolder, genename) {
 	
-	load(file.path(ericscriptfolder, "lib", "data", "EnsemblGene.GeneInfo.RData"))
+	load(file.path(ericscriptfolder, "EnsemblGene.GeneInfo.RData"))
 	ensgene <- as.character(EnsemblGene.GeneInfo$EnsemblGene)[which(as.character(EnsemblGene.GeneInfo$GeneName) == genename)]
 	if (length(ensgene) == 0) {ensgene <- NA}
 	return(ensgene)

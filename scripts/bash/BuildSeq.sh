@@ -7,7 +7,7 @@ myrandomn=$RANDOM
 tmpfolder=$dbfolder/".tmp_"$myrandomn
 mkdir $tmpfolder
 printf "[EricScript] Downloading $refid data. This process may take from few minutes to few hours depending on the selected genome ..."
-R --slave --args $ericscriptfolder,$refid,$tmpfolder,$ensversion < $ericscriptfolder/lib/R/DownloadDB.R
+R --slave --args $ericscriptfolder,$dbfolder,$refid,$tmpfolder,$ensversion < $ericscriptfolder/DownloadDB.R
 flagrefid=`cat $tmpfolder/.refid.flag` 
 if [ $flagrefid -eq 1 ]
 then
@@ -15,9 +15,9 @@ bedtools sort -i $tmpfolder/exonstartend.txt | bedtools merge -c 4 -o collapse -
 seqtk subseq $tmpfolder/seq.fa.gz $tmpfolder/exonstartend.mrg.txt > $tmpfolder/subseq.fa
 printf "done.\n"
 printf "[EricScript] Creating database for $refid ..."
-R --slave --args $ericscriptfolder,$refid,$dbfolder,$tmpfolder < $ericscriptfolder/lib/R/BuildExonUnionModel.R
-R --slave --args $ericscriptfolder,$refid,$dbfolder,$tmpfolder < $ericscriptfolder/lib/R/ConvertTxt2R.R
-R --slave --args $refid,$dbfolder,$tmpfolder < $ericscriptfolder/lib/R/CreateDataEricTheSimulator.R 
+R --slave --args $ericscriptfolder,$refid,$dbfolder,$tmpfolder < $ericscriptfolder/BuildExonUnionModel.R
+R --slave --args $ericscriptfolder,$refid,$dbfolder,$tmpfolder < $ericscriptfolder/ConvertTxt2R.R
+R --slave --args $refid,$dbfolder,$tmpfolder < $ericscriptfolder/CreateDataEricTheSimulator.R 
 if [ $refid == "homo_sapiens" ]
 then
 seqtk subseq -l 50 $tmpfolder/seq.fa.gz $tmpfolder/chrlist > $dbfolder/data/$refid/allseq.fa

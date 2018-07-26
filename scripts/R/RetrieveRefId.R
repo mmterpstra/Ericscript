@@ -17,8 +17,8 @@ if (file.exists("~/.netrc")) {
 } else {
   cat(mynetrc, file = "~/.netrc", sep = "\n")
 }
-system(paste("sh", file.path(ericscriptfolder, "lib", "bash", "Ftp2Ensembl.sh"), ericscriptfolder, ensversion))
-xx.tmp <- readLines(file.path(ericscriptfolder, "lib", "data", "_resources", ".ftplist1"))
+system(paste("sh", file.path(ericscriptfolder, "Ftp2Ensembl.sh"), dbfolder, ensversion))
+xx.tmp <- readLines(file.path(dbfolder, "_resources", ".ftplist1"))
 xx.tmp1 <- strsplit(xx.tmp, " ")
 xx <- rep("", length(xx.tmp))
 for (i in 1: length(xx.tmp1)) {
@@ -44,7 +44,7 @@ for ( i in 1: length(ensrefid.tmp)) {
 }
 ensversion0 <- ensversion
 if (ensversion == 0) {
-  xx.tmp <- readLines(file.path(ericscriptfolder, "lib", "data", "_resources", ".ftplist0"))
+  xx.tmp <- readLines(file.path(dbfolder, "_resources", ".ftplist0"))
   xx.tmp1 <- xx.tmp[grep("[0-9] release-", xx.tmp, perl = T)]
   xx.tmp2 <- strsplit(xx.tmp1, " release-")
   xx.tmp3 <- rep(NA, length(xx.tmp2))
@@ -59,33 +59,33 @@ cat("Selected Ensembl version:", ensversion, "\n")
 } else {
 cat("Current Ensembl version:", ensversion, "\n")
 }
-if (file.exists(file.path(ericscriptfolder, "lib", "data", "_resources", "RefID.RData")) & any(file.exists(file.path(dbfolder, "data", ensrefid)))) {
-  load(file.path(ericscriptfolder, "lib", "data", "_resources", "RefID.RData"))
+if (file.exists(file.path(dbfolder, "_resources", "RefID.RData")) & any(file.exists(file.path(dbfolder, "data", ensrefid)))) {
+  load(file.path(dbfolder, "_resources", "RefID.RData"))
   cat("Installed Ensembl version:", version, "\n")
 } else {
   cat("Installed Ensembl version:", "No database installed", "\n")
 }
   cat("Available reference IDs:\n", paste("\t", ensrefid, "\n"))
 }
-if (file.exists(file.path(ericscriptfolder, "lib", "data", "_resources", "RefID.RData"))) {
-  load(file.path(ericscriptfolder, "lib", "data", "_resources", "RefID.RData"))
+if (file.exists(file.path(dbfolder, "_resources", "RefID.RData"))) {
+  load(file.path(dbfolder, "_resources", "RefID.RData"))
   if (ensversion > version | ensversion0 != 0) {
     refid <- ensrefid
     refid.path <- ensrefid.path
     version <- ensversion
-    save(refid, refid.path, version, file = file.path(ericscriptfolder, "lib", "data", "_resources", "RefID.RData"))
-    cat(version, file = file.path(ericscriptfolder, "lib", "data", "_resources", "Ensembl.version"))
-    cat(1, file = file.path(ericscriptfolder, "lib", "data", "_resources", ".flag.updatedb"))
+    save(refid, refid.path, version, file = file.path(dbfolder, "_resources", "RefID.RData"))
+    cat(version, file = file.path(dbfolder, "_resources", "Ensembl.version"))
+    cat(1, file = file.path(dbfolder, "_resources", ".flag.updatedb"))
   } else {
-    cat(0, file = file.path(ericscriptfolder, "lib", "data", "_resources", ".flag.updatedb"))
+    cat(0, file = file.path(dbfolder, "_resources", ".flag.updatedb"))
   }
 } else {
   refid <- ensrefid
   refid.path <- ensrefid.path
   version <- ensversion
-  save(refid, refid.path, version, file = file.path(ericscriptfolder, "lib", "data", "_resources", "RefID.RData"))
-  cat(version, file = file.path(ericscriptfolder, "lib", "data", "_resources", "Ensembl.version"))
-  cat(1, file = file.path(ericscriptfolder, "lib", "data", "_resources", ".flag.updatedb"))  
+  save(refid, refid.path, version, file = file.path(dbfolder, "_resources", "RefID.RData"))
+  cat(version, file = file.path(dbfolder, "_resources", "Ensembl.version"))
+  cat(1, file = file.path(dbfolder, "_resources", ".flag.updatedb"))  
 }
 
 

@@ -28,8 +28,8 @@ load(file.path(dbfolder, "data", refid, "EnsemblGene.GeneInfo.RData"))
 load(file.path(dbfolder, "data", refid, "EnsemblGene.Structures.RData"))
 load(file.path(dbfolder, "data", refid, "EnsemblGene.GeneNames.RData"))
 load(file.path(dbfolder, "data", refid, "EnsemblGene.Sequences.RData"))
-load(file.path(ericscriptfolder, "lib","data", "_resources", "BlackList.RData"))
-load(file.path(ericscriptfolder, "lib","data", "_resources", "DataModel.RData"))
+load(file.path(dbfolder, "_resources", "BlackList.RData"))
+load(file.path(dbfolder, "_resources", "DataModel.RData"))
 genomeref <- file.path(dbfolder, "data", refid, "allseq.fa")
   
 checkselfhomology.fa <- scan(file = file.path(outputfolder,"out", paste(samplename, ".checkselfhomology.fa", sep = "")), sep= "\n", what = "", quiet = T)
@@ -201,7 +201,7 @@ for (i in 1: length(ensgenename1)) {
 }
 system(paste("bwa aln", "-R 50", genomeref, file.path(outputfolder, "out", "findgenomicpos.fq"), ">", file.path(outputfolder, "out", "findgenomicpos.fq.sai"), "2>>", file.path(outputfolder, "out", ".ericscript.log")))
 system(paste("bwa samse", "-n 50", genomeref, file.path(outputfolder, "out", "findgenomicpos.fq.sai"), file.path(outputfolder, "out", "findgenomicpos.fq"), ">", file.path(outputfolder, "out", "findgenomicpos.fq.tmp"), "2>>", file.path(outputfolder, "out", ".ericscript.log")))
-system(paste("cat", file.path(outputfolder, "out", "findgenomicpos.fq.tmp"), "|", file.path(ericscriptfolder, "lib", "perl", "xa2multi.pl"), "-", "|","grep -v -e \'^\\@\' -",">", file.path(outputfolder, "out", "findgenomicpos.fq.sam")))
+system(paste("cat", file.path(outputfolder, "out", "findgenomicpos.fq.tmp"), "|", file.path(ericscriptfolder, "xa2multi.pl"), "-", "|","grep -v -e \'^\\@\' -",">", file.path(outputfolder, "out", "findgenomicpos.fq.sam")))
 xx.pos <- read.delim(file.path(outputfolder, "out", "findgenomicpos.fq.sam"), sep = "\t", header= F)
 genpos_1 <- rep(0,length(ensgenename1))
 genpos_2 <- rep(0,length(ensgenename1))
@@ -268,7 +268,7 @@ for (i in 1: length(ensgenename1)) {
 }
 system(paste("bwa aln", "-R 50", genomeref, file.path(outputfolder, "out", "findgenomicpos.fq"), ">", file.path(outputfolder, "out", "findgenomicpos.fq.sai"), "2>>", file.path(outputfolder, "out", ".ericscript.log")))
 system(paste("bwa samse", "-n 50", genomeref, file.path(outputfolder, "out", "findgenomicpos.fq.sai"), file.path(outputfolder, "out", "findgenomicpos.fq"), ">", file.path(outputfolder, "out", "findgenomicpos.fq.tmp"), "2>>", file.path(outputfolder, "out", ".ericscript.log")))
-system(paste("cat", file.path(outputfolder, "out", "findgenomicpos.fq.tmp"), "|", file.path(ericscriptfolder, "lib", "perl", "xa2multi.pl"), "-", "|","grep -v -e \'^\\@\' -",">", file.path(outputfolder, "out", "findgenomicpos.fq.sam")))
+system(paste("cat", file.path(outputfolder, "out", "findgenomicpos.fq.tmp"), "|", file.path(ericscriptfolder, "xa2multi.pl"), "-", "|","grep -v -e \'^\\@\' -",">", file.path(outputfolder, "out", "findgenomicpos.fq.sam")))
 xx.pos <- read.delim(file.path(outputfolder, "out", "findgenomicpos.fq.sam"), sep = "\t", header= F)
 id.pos <- as.character(xx.pos[[1]])
 flag.pos <- as.character(xx.pos[[2]])
@@ -332,7 +332,7 @@ for (i in 1: length(ensgenename1)) {
 }
 system(paste("bwa aln", "-R 50", genomeref, file.path(outputfolder, "out", "findgenomicpos.fq"), ">", file.path(outputfolder, "out", "findgenomicpos.fq.sai"), "2>>", file.path(outputfolder, "out", ".ericscript.log")))
 system(paste("bwa samse", "-n 50", genomeref, file.path(outputfolder, "out", "findgenomicpos.fq.sai"), file.path(outputfolder, "out", "findgenomicpos.fq"), ">", file.path(outputfolder, "out", "findgenomicpos.fq.tmp"), "2>>", file.path(outputfolder, "out", ".ericscript.log")))
-system(paste("cat", file.path(outputfolder, "out", "findgenomicpos.fq.tmp"), "|", file.path(ericscriptfolder, "lib", "perl", "xa2multi.pl"), "-", "|","grep -v -e \'^\\@\' -",">", file.path(outputfolder, "out", "findgenomicpos.fq.sam")))
+system(paste("cat", file.path(outputfolder, "out", "findgenomicpos.fq.tmp"), "|", file.path(ericscriptfolder, "xa2multi.pl"), "-", "|","grep -v -e \'^\\@\' -",">", file.path(outputfolder, "out", "findgenomicpos.fq.sam")))
 
 
 xx.pos <- read.delim(file.path(outputfolder, "out", "findgenomicpos.fq.sam"), sep = "\t", header= F)
