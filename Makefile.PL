@@ -51,6 +51,17 @@ requires (
    #'Foo::Bar::Module' => 5.0401,
 );
 
+install_script './ericscript.pl';
+for my $script (glob("scripts/*/*{.R,.sh,.pl,.fq.gz,.RData}")){
+	install_script $script;
+} 
+
+install_as_vendor;
+# './bin/ericscript_bash/RunEric.sh';
+#install_script './bin/ericscript_bash/BuildSeq.sh';
+#install_script './bin/ericscript_demo';
+#install_script './bin/ericscript_perl';
+#install_script './bin/ericscript_R';
 install_as_cpan;
 auto_install;
 WriteAll;

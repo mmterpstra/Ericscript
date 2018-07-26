@@ -135,14 +135,14 @@ if ($downdb != 0) {
 }
 
 if ($printdb != 0) {
-    system("R --slave --args $ericscriptfolder,$printdb,$dbfolder,$ensversion < $ericscriptfolder/lib/R/RetrieveRefId.R");
+    system("R --slave --args $ericscriptfolder,$printdb,$dbfolder,$ensversion < $ericscriptfolder/RetrieveRefId.R");
 	exit(100);
 }
 
 if ($recalc != 0) {
-    system("R --slave --args $ericscriptfolder,$refid,$dbfolder < $ericscriptfolder/lib/R/CheckDB.R");
+    system("R --slave --args $ericscriptfolder,$refid,$dbfolder < $ericscriptfolder/CheckDB.R");
     my $flagdb;
-    open FILE, "< $ericscriptfolder/lib/data/_resources/.flag.dbexists";
+    open FILE, "< $ericscriptfolder/_resources/.flag.dbexists";
     $flagdb = <FILE>;
     if ($flagdb == 0) {
         pod2usage ();
@@ -157,7 +157,7 @@ if ($recalc != 0) {
 #	$outputfolder = abs_path($outputfolder);
 	if (-d $outputfolder) { 
 		my $abs_outputfolder = abs_path($outputfolder);
-		system("R --slave --args $ericscriptfolder,$abs_outputfolder,$dbfolder,$refid,$genomeref < $ericscriptfolder/lib/R/CalcBreakpointPositions.R");	
+		system("R --slave --args $ericscriptfolder,$abs_outputfolder,$dbfolder,$refid,$genomeref < $ericscriptfolder/CalcBreakpointPositions.R");	
     } else {
         die "[EricScript] Error: output folder $outputfolder does not exist.\n";
 	}
@@ -171,9 +171,9 @@ if ($checkdb == 0 && $demo == 0 && $simulator == 0 && $calcstats == 0 && $downdb
 	($reads_1, $reads_2) = @ARGV;
 
 		## check db existence
-	system("R --slave --args $ericscriptfolder,$refid,$dbfolder < $ericscriptfolder/lib/R/CheckDB.R");
+	system("R --slave --args $ericscriptfolder,$refid,$dbfolder < $ericscriptfolder/CheckDB.R");
 	my $flagdb;
-	open FILE, "< $ericscriptfolder/lib/data/_resources/.flag.dbexists";
+	open FILE, "< $ericscriptfolder/_resources/.flag.dbexists";
 	$flagdb = <FILE>;
 	if ($flagdb == 0) {
 		exit(100);
@@ -240,12 +240,12 @@ if ($checkdb == 0 && $demo == 0 && $simulator == 0 && $calcstats == 0 && $downdb
 	close (FILE); 
 	
 	system("cp", "$varfile", "$outputfolder/out/.ericscript.vars");
-	system("bash", "$ericscriptfolder/lib/bash/RunEric.sh", "$rnum");
+	system("bash", "$ericscriptfolder/RunEric.sh", "$rnum");
 } elsif ($checkdb != 0) {
 	if (-d $dbfolder) {
 		print STDERR "[EricScript] Checking installed Database.\n";
-		system("R --slave --args $ericscriptfolder,$printdb,$dbfolder,$ensversion < $ericscriptfolder/lib/R/RetrieveRefId.R");
-		system("R --slave --args $ericscriptfolder,$dbfolder < $ericscriptfolder/lib/R/UpdateDB.R");
+		system("R --slave --args $ericscriptfolder,$printdb,$dbfolder,$ensversion < $ericscriptfolder/RetrieveRefId.R");
+		system("R --slave --args $ericscriptfolder,$dbfolder < $ericscriptfolder/UpdateDB.R");
 		exit(100);
 	} else {
 		die "[EricScript] Error: the directory $dbfolder does not exist.\n";
@@ -255,8 +255,8 @@ if ($checkdb == 0 && $demo == 0 && $simulator == 0 && $calcstats == 0 && $downdb
 		if ( !-d "$dbfolder/data" ) {
 			mkdir ("$dbfolder/data");
 		}
-	system("R --slave --args $ericscriptfolder,$printdb,$dbfolder,$ensversion < $ericscriptfolder/lib/R/RetrieveRefId.R");
-	system("bash $ericscriptfolder/lib/bash/BuildSeq.sh $ericscriptfolder $refid $dbfolder $ensversion");	
+	system("R --slave --args $ericscriptfolder,$printdb,$dbfolder,$ensversion < $ericscriptfolder/RetrieveRefId.R");
+	system("bash $ericscriptfolder/BuildSeq.sh $ericscriptfolder $refid $dbfolder $ensversion");	
 	} else {
 		die "[EricScript] Error: the directory $dbfolder does not exist.\n";
 	}
@@ -265,9 +265,9 @@ if ($checkdb == 0 && $demo == 0 && $simulator == 0 && $calcstats == 0 && $downdb
         ## check db
 #    my $file3 = File::Spec->catfile ($genomeref);
 #    -f $file3 or die ("[EricScript] Error: please specify a genome reference file.\n");
-    system("R --slave --args $ericscriptfolder,$refid,$dbfolder < $ericscriptfolder/lib/R/CheckDB.R");
+    system("R --slave --args $ericscriptfolder,$refid,$dbfolder < $ericscriptfolder/CheckDB.R");
     my $flagdb;
-    open FILE, "< $ericscriptfolder/lib/data/_resources/.flag.dbexists";
+    open FILE, "< $ericscriptfolder/_resources/.flag.dbexists";
     $flagdb = <FILE>;
     if ($flagdb == 0) {
         pod2usage ();
@@ -292,8 +292,8 @@ if ($checkdb == 0 && $demo == 0 && $simulator == 0 && $calcstats == 0 && $downdb
 	my $myref="$dbfolder/data/$refid/EnsemblGene.Reference.fa";
 	my $mynewref="$outputfolder/out/$samplename.EricScript.junctions.fa";
 	my $mynewref_recal="$outputfolder/out/$samplename.EricScript.fa";
-	my $reads_1="$ericscriptfolder/lib/demo/myreads_1.fq.gz";
-	my $reads_2="$ericscriptfolder/lib/demo/myreads_2.fq.gz";	
+	my $reads_1="$ericscriptfolder/myreads_1.fq.gz";
+	my $reads_2="$ericscriptfolder/myreads_2.fq.gz";	
 	my $flagbin= 1;
 	if (-T $reads_1) {
 		$flagbin = 0;
@@ -324,7 +324,7 @@ if ($checkdb == 0 && $demo == 0 && $simulator == 0 && $calcstats == 0 && $downdb
 	close (FILE); 
 	
 	system("cp", "$varfile", "$outputfolder/out/.ericscript.vars");
-	system("bash", "$ericscriptfolder/lib/bash/RunEric.sh", "$rnum");
+	system("bash", "$ericscriptfolder/RunEric.sh", "$rnum");
 	
 } 
 elsif ($simulator != 0) {
@@ -361,7 +361,7 @@ elsif ($simulator != 0) {
 	$background_2 ||= 0;
 	$nreads_background ||= 200000;
 	my $abs_outputfolder = abs_path($outputfolder);
-	my $simcommand="R --slave --args $readlength,$abs_outputfolder,$ericscriptfolder,$verbose,$insize,$sd_insize,$ngenefusion,$min_cov,$max_cov,$nsims,$be,$ie,$background_1,$background_2,$nreads_background,$dbfolder,$refid < $ericscriptfolder/lib/R/SimulateFusions.R";
+	my $simcommand="R --slave --args $readlength,$abs_outputfolder,$ericscriptfolder,$verbose,$insize,$sd_insize,$ngenefusion,$min_cov,$max_cov,$nsims,$be,$ie,$background_1,$background_2,$nreads_background,$dbfolder,$refid < $ericscriptfolder/SimulateFusions.R";
 	system($simcommand);	
 
 }
@@ -387,7 +387,7 @@ elsif ($calcstats != 0) {
 	my $datafolder1="$datafolder/$dataset";
 	-e $datafolder1 || die "[EricScript] Error: no $dataset synthetic data have been found in $datafolder. \n";
 
-	my $calcstatscommand="R --slave --args $resultsfolder,$abs_outputfolder,$datafolder,$algoname,$dataset,$readlength,$normroc,$ericscriptfolder < $ericscriptfolder/lib/R/CalcStats.R";
+	my $calcstatscommand="R --slave --args $resultsfolder,$abs_outputfolder,$datafolder,$algoname,$dataset,$readlength,$normroc,$ericscriptfolder < $ericscriptfolder/CalcStats.R";
 	system($calcstatscommand);
 
 }
