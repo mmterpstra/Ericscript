@@ -8,7 +8,7 @@ tmpfolder=$dbfolder/".tmp_"$myrandomn
 mkdir $tmpfolder
 printf "[EricScript] Downloading $refid data. This process may take from few minutes to few hours depending on the selected genome ..."
 R --slave --args $ericscriptfolder,$dbfolder,$refid,$tmpfolder,$ensversion < $ericscriptfolder/DownloadDB.R
-flagrefid=`cat $tmpfolder/.refid.flag` 
+flagrefid=`cat $tmpfolder/.refid.flag`
 if [ $flagrefid -eq 1 ]
 then
 bedtools sort -i $tmpfolder/exonstartend.txt | bedtools merge -c 4 -o collapse -i - | cut -d ',' -f1 - | awk '{print $4"\t"($2-1)"\t"$3"\t"$1}' - > $tmpfolder/exonstartend.mrg.txt

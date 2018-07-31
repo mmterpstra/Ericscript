@@ -2,6 +2,13 @@
 
 dbfolder=$1
 ensversion=$2
+
+>&2 echo "# INFO # ftp connect to ensembl $1 $2. I hope ftp is enabled."
+
+if [ ! -e $dbfolder/_resources/ ]; then
+  mkdir -p $dbfolder/_resources/
+fi
+
 if [ $ensversion -eq 0 ]; then
    fasta_path="current_fasta/"
 else 

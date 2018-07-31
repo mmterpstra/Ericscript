@@ -52,8 +52,8 @@ GetOptions('verbose|v'=>\$verbose,
 'ensversion=i'=>\$ensversion,
 'MAPQ=f'=>\$MAPQ) or pod2usage ();
 
-$help and pod2usage (-verbose=>1, -exitval=>1, -output=>\*STDOUT);
-$man and pod2usage (-verbose=>2, -exitval=>1, -output=>\*STDOUT);
+$help and pod2usage (-verbose=>1, -exitval=>0, -output=>\*STDERR);
+$man and pod2usage (-verbose=>2, -exitval=>0, -output=>\*STDERR);
 
 my $sysmsg;
 my $sysflag=0;
