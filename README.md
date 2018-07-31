@@ -5,6 +5,11 @@
 Fork created by mmterpstra@github.com due to inactivity on the original forum. The version the files from is v0.5.5. 
 This goals: run a minimal install/test on travis if possible. Feel free to submit a pull request if you think you can fix it faster and better.
 
+Original project links:
+ - https://sites.google.com/site/bioericscript/
+ - https://sourceforge.net/projects/ericscript/
+ - https://groups.google.com/forum/#!forum/ericscript
+
 Please feel free to email the author if you have any questions or issues.
 matteo.benelli AT gmail.com
 

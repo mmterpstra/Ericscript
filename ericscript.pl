@@ -461,7 +461,7 @@ elsif ($calcstats != 0) {
  More information about running EricScript Simulator and EricScript CalcStats can be 
  found at http://ericscript.sourceforge.net
  
- Version: 0.5.5b
+ Version: 0.5.6
  
 =head1 OPTIONS
  
