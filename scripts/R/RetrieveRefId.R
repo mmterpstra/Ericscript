@@ -8,6 +8,7 @@ flagprint <- split.vars [2]
 dbfolder <-  split.vars [3]
 ensversion <- split.vars [4]
 
+#apply ftp settings to .netrc 
 mynetrc <- "machine ftp.ensembl.org login anonymous password -"
 if (file.exists("~/.netrc")) {
   netrc.data <- scan("~/.netrc", what = "", sep = "\n", quiet = T)
@@ -17,9 +18,13 @@ if (file.exists("~/.netrc")) {
 } else {
   cat(mynetrc, file = "~/.netrc", sep = "\n")
 }
-system(paste("sh", file.path(ericscriptfolder, "lib", "bash", "Ftp2Ensembl.sh"), ericscriptfolder, ensversion))
-xx.tmp <- readLines(file.path(ericscriptfolder, "lib", "data", "_resources", ".ftplist1"))
+
+#list the species on the server(works..., but the parsing afterwards fails)
+system(paste("sh", file.path(ericscriptfolder, "Ftp2Ensembl.sh"), dbfolder, ensversion))
+xx.tmp <- readLines(file.path(dbfolder, "_resources", ".ftplist1"))
 xx.tmp1 <- strsplit(xx.tmp, " ")
+
+#ugly stuff for parsing ftplist1
 xx <- rep("", length(xx.tmp))
 for (i in 1: length(xx.tmp1)) {
   if (length(xx.tmp1[[i]]) > 0) {
@@ -29,22 +34,28 @@ for (i in 1: length(xx.tmp1)) {
   }
 }
 
+#Determine if a DNA reference genome is present and include if true, seems buggy here so try and flix
 mybreaks <- which(xx == "")
 ensrefid.tmp <- xx[1: mybreaks[1]]
 ensrefid <- c()
 ensrefid.path <- c()
 for ( i in 1: length(ensrefid.tmp)) {
-  #  ix.start <- which(xx == paste("./", ensrefid.tmp[i], "/dna:", sep ="")) + 1
+  #ix.start <- which(xx == paste("", ensrefid.tmp[i], "/dna:", sep ="")) + 1
+  #the comment out was switched here
   ix.start <- which(xx == paste(ensrefid.tmp[i], "/dna:", sep ="")) + 1
+  ix.start <- which(xx == grep(paste("/",ensrefid.tmp[i],"/dna:", sep =""), xx, value = T))+1
+
   if (length(ix.start) != 0) {
     ix.end <- grep("./", xx[ix.start: length(xx)])[1] + ix.start - 1
     ensrefid <- c(ensrefid, ensrefid.tmp[i])
     ensrefid.path <- c(ensrefid.path, grep("dna.toplevel", xx[ix.start: ix.end], value = T))
   }
 }
+
+#get ensembl version from .ftplist0
 ensversion0 <- ensversion
 if (ensversion == 0) {
-  xx.tmp <- readLines(file.path(ericscriptfolder, "lib", "data", "_resources", ".ftplist0"))
+  xx.tmp <- readLines(file.path(dbfolder, "_resources", ".ftplist0"))
   xx.tmp1 <- xx.tmp[grep("[0-9] release-", xx.tmp, perl = T)]
   xx.tmp2 <- strsplit(xx.tmp1, " release-")
   xx.tmp3 <- rep(NA, length(xx.tmp2))
@@ -53,40 +64,38 @@ if (ensversion == 0) {
   }
   ensversion <- max(xx.tmp3)
 }
+
 if (flagprint != 0) {
 if (ensversion0 != 0) {
 cat("Selected Ensembl version:", ensversion, "\n")
 } else {
 cat("Current Ensembl version:", ensversion, "\n")
 }
-if (file.exists(file.path(ericscriptfolder, "lib", "data", "_resources", "RefID.RData")) & any(file.exists(file.path(dbfolder, "data", ensrefid)))) {
-  load(file.path(ericscriptfolder, "lib", "data", "_resources", "RefID.RData"))
+if (file.exists(file.path(dbfolder, "_resources", "RefID.RData")) & any(file.exists(file.path(dbfolder, "data", ensrefid)))) {
+  load(file.path(dbfolder, "_resources", "RefID.RData"))
   cat("Installed Ensembl version:", version, "\n")
 } else {
   cat("Installed Ensembl version:", "No database installed", "\n")
 }
   cat("Available reference IDs:\n", paste("\t", ensrefid, "\n"))
 }
-if (file.exists(file.path(ericscriptfolder, "lib", "data", "_resources", "RefID.RData"))) {
-  load(file.path(ericscriptfolder, "lib", "data", "_resources", "RefID.RData"))
+if (file.exists(file.path(dbfolder, "_resources", "RefID.RData"))) {
+  load(file.path(dbfolder, "_resources", "RefID.RData"))
   if (ensversion > version | ensversion0 != 0) {
     refid <- ensrefid
     refid.path <- ensrefid.path
     version <- ensversion
-    save(refid, refid.path, version, file = file.path(ericscriptfolder, "lib", "data", "_resources", "RefID.RData"))
-    cat(version, file = file.path(ericscriptfolder, "lib", "data", "_resources", "Ensembl.version"))
-    cat(1, file = file.path(ericscriptfolder, "lib", "data", "_resources", ".flag.updatedb"))
+    save(refid, refid.path, version, file = file.path(dbfolder, "_resources", "RefID.RData"))
+    cat(version, file = file.path(dbfolder, "_resources", "Ensembl.version"))
+    cat(1, file = file.path(dbfolder, "_resources", ".flag.updatedb"))
   } else {
-    cat(0, file = file.path(ericscriptfolder, "lib", "data", "_resources", ".flag.updatedb"))
+    cat(0, file = file.path(dbfolder, "_resources", ".flag.updatedb"))
   }
 } else {
   refid <- ensrefid
   refid.path <- ensrefid.path
   version <- ensversion
-  save(refid, refid.path, version, file = file.path(ericscriptfolder, "lib", "data", "_resources", "RefID.RData"))
-  cat(version, file = file.path(ericscriptfolder, "lib", "data", "_resources", "Ensembl.version"))
-  cat(1, file = file.path(ericscriptfolder, "lib", "data", "_resources", ".flag.updatedb"))  
+  save(refid, refid.path, version, file = file.path(dbfolder, "_resources", "RefID.RData"))
+  cat(version, file = file.path(dbfolder, "_resources", "Ensembl.version"))
+  cat(1, file = file.path(dbfolder, "_resources", ".flag.updatedb"))  
 }
-
-
-

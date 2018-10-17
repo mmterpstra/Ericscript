@@ -27,30 +27,35 @@ xx <- file.exists(file.path(dbfolder, "data", refid))
     cat("[EricScript] DB data for", refid, "genome do not exist. Set correct -db option or run \" ericscript.pl --downdb --refid", refid, "\" to solve this.\n")
   }
 
+## Check resource folder
+ry <- file.exists(file.path(dbfolder, "_resources"))
+if (! ry) {
+	dir.create(file.path(dbfolder, "_resources"),recursive = TRUE)	
+}
 ## check bwa version
-yy <- file.exists(file.path(ericscriptfolder, "lib", "data", "_resources", ".bwa.version"))
+yy <- file.exists(file.path(dbfolder, "_resources", ".bwa.version"))
 if (yy) {
-  prev.version.bwa <- scan(file.path(ericscriptfolder, "lib", "data", "_resources", ".bwa.version"), what = "", quiet = T, sep = "\n")
-  system(paste("bwa", "2>&1", "|", "grep ersion", ">", file.path(ericscriptfolder, "lib", "data", "_resources", ".bwa.version.tmp")))
-  curr.version.bwa <- scan(file.path(ericscriptfolder, "lib", "data", "_resources", ".bwa.version.tmp"), what = "", quiet = T, sep = "\n")
+  prev.version.bwa <- scan(file.path(dbfolder, "_resources", ".bwa.version"), what = "", quiet = T, sep = "\n")
+  system(paste("bwa", "2>&1", "|", "grep ersion", ">", file.path(dbfolder, "_resources", ".bwa.version.tmp")))
+  curr.version.bwa <- scan(file.path(dbfolder, "_resources", ".bwa.version.tmp"), what = "", quiet = T, sep = "\n")
   if (curr.version.bwa != prev.version.bwa) {
     cat("[EricScript] Updating BWA indexes for", refid,"... ")    
-    system(paste("bwa index", file.path(file.path(dbfolder, "data", refid, "EnsemblGene.Reference.fa")), "1>>", file.path(ericscriptfolder, "lib", "data", "_resources", ".bwa.version.tmp"), "2>>", file.path(ericscriptfolder, "lib", "data", "_resources", ".bwa.version.tmp")))    
+    system(paste("bwa index", file.path(file.path(dbfolder, "data", refid, "EnsemblGene.Reference.fa")), "1>>", file.path(dbfolder, "_resources", ".bwa.version.tmp"), "2>>", file.path(dbfolder, "_resources", ".bwa.version.tmp")))    
     cat("done.\n")
-    cat(curr.version.bwa, file = file.path(ericscriptfolder, "lib", "data", "_resources", ".bwa.version"))
+    cat(curr.version.bwa, file = file.path(dbfolder, "_resources", ".bwa.version"))
   }
 } else {
-  system(paste("bwa", "2>&1", "|", "grep ersion", ">", file.path(ericscriptfolder, "lib", "data", "_resources", ".bwa.version.tmp")))
-  curr.version.bwa <- scan(file.path(ericscriptfolder, "lib", "data", "_resources", ".bwa.version.tmp"), what = "", quiet = T, sep = "\n")
+  system(paste("bwa", "2>&1", "|", "grep ersion", ">", file.path(dbfolder, "_resources", ".bwa.version.tmp")))
+  curr.version.bwa <- scan(file.path(dbfolder, "_resources", ".bwa.version.tmp"), what = "", quiet = T, sep = "\n")
   version.a <- gsub("Version: ", "", strsplit(curr.version.bwa, ".", fixed = T)[[1]][1])
   version.b <- strsplit(curr.version.bwa, ".", fixed = T)[[1]][2]
   version.c <- gsub("[a-z]", "", strsplit(strsplit(curr.version.bwa, ".", fixed = T)[[1]][3], "-")[[1]][1])
   version.tot <- as.numeric(paste(version.a, version.b, version.c, sep = ""))
   if (version.tot >= 74) {
     cat("[EricScript] Updating BWA indexes for", refid, "...")    
-    system(paste("bwa index", file.path(file.path(dbfolder, "data", refid, "EnsemblGene.Reference.fa")), "1>>", file.path(ericscriptfolder, "lib", "data", "_resources", ".bwa.version.tmp"), "2>>", file.path(ericscriptfolder, "lib", "data", "_resources", ".bwa.version.tmp")))    
+    system(paste("bwa index", file.path(file.path(dbfolder, "data", refid, "EnsemblGene.Reference.fa")), "1>>", file.path(dbfolder, "_resources", ".bwa.version.tmp"), "2>>", file.path(dbfolder, "_resources", ".bwa.version.tmp")))    
     cat("done.\n")
-    system(paste("bwa", "2>&1", "|", "grep ersion", ">", file.path(ericscriptfolder, "lib", "data", "_resources", ".bwa.version")))
+    system(paste("bwa", "2>&1", "|", "grep ersion", ">", file.path(dbfolder, "_resources", ".bwa.version")))
    } else {
     flag.dbexists <- 0
     cat("[EricScript] BWA version >= 0.7.4 is required. Exit.\n") 
@@ -68,6 +73,6 @@ if (xx) {
   }  
 }
 
-cat(flag.dbexists, file = file.path(ericscriptfolder, "lib", "data", "_resources", ".flag.dbexists"))
+cat(flag.dbexists, file = file.path(dbfolder, "_resources", ".flag.dbexists"))
 
 

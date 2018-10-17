@@ -1,0 +1,1 @@
+ml purge && ml SAMtools/0.1.19-foss-2015b Perl/5.24.0-foss-2015b BEDTools/2.25.0-foss-2015b BLAT/3.5-foss-2015b BWA/0.7.15-foss-2015b Seqtk/1.0-r82b-foss-2015b ada/2.0-3-foss-2015b-R-3.4.4-bare

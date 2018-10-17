@@ -2,12 +2,13 @@ vars.tmp <- commandArgs()
 vars <- vars.tmp[length(vars.tmp)]
 split.vars <- unlist(strsplit(vars, ","))
 ericscriptfolder <- split.vars [1]
-user.refid <- split.vars [2]
-tmpfolder <- split.vars [3]
-ensversion <- as.numeric(split.vars [4])
+dbfolder <- split.vars [2]
+user.refid <- split.vars [3]
+tmpfolder <- split.vars [4]
+ensversion <- as.numeric(split.vars [5])
 ####
 
-load(file.path(ericscriptfolder, "lib", "data", "_resources", "RefID.RData"))
+load(file.path(dbfolder, "_resources", "RefID.RData"))
 ix.refid <- which(refid == user.refid)
 if (length(ix.refid) == 0) {
   cat("\n[EricScript] Error: No data available for genome ", user.refid, ". Run ericscript.pl --printdb to view the available genomes.\n", sep = "")
@@ -188,14 +189,14 @@ cat("</Dataset>", file = fileout, sep = "\n", append = T)
 cat("</Query>", file = fileout, sep = "\n", append = T)
 
 ## download gene data
-system(paste("perl", file.path(ericscriptfolder, "lib", "perl", "retrievefrombiomart.pl"), file.path(tmpfolder, "genepos.xml"), ensversion, "| sort -u - >", file.path(tmpfolder, "genepos.txt")))
-system(paste("perl", file.path(ericscriptfolder, "lib", "perl", "retrievefrombiomart.pl"), file.path(tmpfolder, "geneinfo.xml"), ensversion, "| sort -u - >", file.path(tmpfolder, "geneinfo.txt")))
-system(paste("perl", file.path(ericscriptfolder, "lib", "perl", "retrievefrombiomart.pl"), file.path(tmpfolder, "exonstartend.xml"), ensversion, "| sort -u - >", file.path(tmpfolder, "exonstartend.txt")))
-system(paste("perl", file.path(ericscriptfolder, "lib", "perl", "retrievefrombiomart.pl"), file.path(tmpfolder, "strand.xml"), ensversion, "| sort -u - >", file.path(tmpfolder, "strand.txt")))
-system(paste("perl", file.path(ericscriptfolder, "lib", "perl", "retrievefrombiomart.pl"), file.path(tmpfolder, "transcripts.xml"), ensversion, "| sort -u - >", file.path(tmpfolder, "transcripts.txt")))
-system(paste("perl", file.path(ericscriptfolder, "lib", "perl", "retrievefrombiomart.pl"), file.path(tmpfolder, "transcripts_cdna.xml"), ensversion, ">", file.path(tmpfolder, "transcripts.fa")))
+system(paste("perl", file.path(ericscriptfolder, "retrievefrombiomart.pl"), file.path(tmpfolder, "genepos.xml"), ensversion, "| sort -u - >", file.path(tmpfolder, "genepos.txt")))
+system(paste("perl", file.path(ericscriptfolder, "retrievefrombiomart.pl"), file.path(tmpfolder, "geneinfo.xml"), ensversion, "| sort -u - >", file.path(tmpfolder, "geneinfo.txt")))
+system(paste("perl", file.path(ericscriptfolder, "retrievefrombiomart.pl"), file.path(tmpfolder, "exonstartend.xml"), ensversion, "| sort -u - >", file.path(tmpfolder, "exonstartend.txt")))
+system(paste("perl", file.path(ericscriptfolder, "retrievefrombiomart.pl"), file.path(tmpfolder, "strand.xml"), ensversion, "| sort -u - >", file.path(tmpfolder, "strand.txt")))
+system(paste("perl", file.path(ericscriptfolder, "retrievefrombiomart.pl"), file.path(tmpfolder, "transcripts.xml"), ensversion, "| sort -u - >", file.path(tmpfolder, "transcripts.txt")))
+system(paste("perl", file.path(ericscriptfolder, "retrievefrombiomart.pl"), file.path(tmpfolder, "transcripts_cdna.xml"), ensversion, ">", file.path(tmpfolder, "transcripts.fa")))
 if (myrefid == "homo_sapiens") {
-  system(paste("perl", file.path(ericscriptfolder, "lib", "perl", "retrievefrombiomart.pl"), file.path(tmpfolder, "paralogs.xml"), ensversion, "| sort -u - >", file.path(tmpfolder, "paralogs.txt")))
+  system(paste("perl", file.path(ericscriptfolder, "retrievefrombiomart.pl"), file.path(tmpfolder, "paralogs.xml"), ensversion, "| sort -u - >", file.path(tmpfolder, "paralogs.txt")))
   acc.chrs <- c(1:22, "X", "Y")
   cat (acc.chrs, file = file.path(tmpfolder, "chrlist"), sep = "\n")
 }

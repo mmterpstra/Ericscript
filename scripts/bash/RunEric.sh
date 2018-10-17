@@ -22,12 +22,12 @@ ntrim=50
 fi
 printf "[EricScript] Trimming PE reads to $ntrim nt ..."
 if [ $flagbin -eq 0 ]; then
-perl $ericscriptfolder/lib/perl/trimfq.pl $reads_1 $ntrim $outputfolder/aln/$samplename.1.fq.trimmed
-perl $ericscriptfolder/lib/perl/trimfq.pl $reads_2 $ntrim $outputfolder/aln/$samplename.2.fq.trimmed
+perl $ericscriptfolder/trimfq.pl $reads_1 $ntrim $outputfolder/aln/$samplename.1.fq.trimmed
+perl $ericscriptfolder/trimfq.pl $reads_2 $ntrim $outputfolder/aln/$samplename.2.fq.trimmed
 printf "done. \n"
 else
-gunzip -c $reads_1 | perl $ericscriptfolder/lib/perl/trimfq.pl - $ntrim $outputfolder/aln/$samplename.1.fq.trimmed
-gunzip -c $reads_2 | perl $ericscriptfolder/lib/perl/trimfq.pl - $ntrim $outputfolder/aln/$samplename.2.fq.trimmed
+gunzip -c $reads_1 | perl $ericscriptfolder/trimfq.pl - $ntrim $outputfolder/aln/$samplename.1.fq.trimmed
+gunzip -c $reads_2 | perl $ericscriptfolder/trimfq.pl - $ntrim $outputfolder/aln/$samplename.2.fq.trimmed
 fi
 if [ $verbose -eq 0 ]; then
 printf "[EricScript] Aligning with bwa ..."
@@ -47,7 +47,7 @@ bwa sampe -P -c 0.001 $myref $outputfolder/aln/"$samplename"_1.sai $outputfolder
 else
 bwa mem -Y -t $nthreads $myref $outputfolder/aln/$samplename.1.fq.trimmed $outputfolder/aln/$samplename.2.fq.trimmed > $outputfolder/aln/tmp.sam 2>> $outputfolder/out/.ericscript.log
 fi
-cat $outputfolder/aln/tmp.sam | $ericscriptfolder/lib/perl/xa2multi.pl > $outputfolder/aln/"$samplename".sam
+cat $outputfolder/aln/tmp.sam | $ericscriptfolder/xa2multi.pl > $outputfolder/aln/"$samplename".sam
 fi
 else
 printf "[EricScript] Aligning with bwa ...\n"
@@ -63,9 +63,9 @@ bwa mem -t $nthreads $myref $outputfolder/aln/$samplename.1.fq.trimmed $outputfo
 fi
 else
 if [ $bwa_aln -eq 1 ]; then
-bwa sampe -P -c 0.001 $myref $outputfolder/aln/"$samplename"_1.sai $outputfolder/aln/"$samplename"_2.sai $outputfolder/aln/$samplename.1.fq.trimmed $outputfolder/aln/$samplename.2.fq.trimmed | $ericscriptfolder/lib/perl/xa2multi.pl > $outputfolder/aln/"$samplename".sam
+bwa sampe -P -c 0.001 $myref $outputfolder/aln/"$samplename"_1.sai $outputfolder/aln/"$samplename"_2.sai $outputfolder/aln/$samplename.1.fq.trimmed $outputfolder/aln/$samplename.2.fq.trimmed | $ericscriptfolder/xa2multi.pl > $outputfolder/aln/"$samplename".sam
 else
-bwa mem -Y -t $nthreads $myref $outputfolder/aln/$samplename.1.fq.trimmed $outputfolder/aln/$samplename.2.fq.trimmed | $ericscriptfolder/lib/perl/xa2multi.pl > $outputfolder/aln/"$samplename".sam
+bwa mem -Y -t $nthreads $myref $outputfolder/aln/$samplename.1.fq.trimmed $outputfolder/aln/$samplename.2.fq.trimmed | $ericscriptfolder/xa2multi.pl > $outputfolder/aln/"$samplename".sam
 fi
 fi
 fi
@@ -91,7 +91,7 @@ bwa sampe -P -c 0.001 $myref $outputfolder/aln/"$samplename"_1.sai $outputfolder
 else
 bwa mem -Y -t $nthreads $myref $reads_1 $reads_2 > $outputfolder/aln/tmp.sam 2>> $outputfolder/out/.ericscript.log
 fi
-cat $outputfolder/aln/tmp.sam | $ericscriptfolder/lib/perl/xa2multi.pl > $outputfolder/aln/"$samplename".sam
+cat $outputfolder/aln/tmp.sam | $ericscriptfolder/xa2multi.pl > $outputfolder/aln/"$samplename".sam
 fi
 else
 printf "[EricScript] Aligning with bwa ...\n"
@@ -107,29 +107,29 @@ bwa mem -t $nthreads $myref $reads_1 $reads_2 > $outputfolder/aln/"$samplename".
 fi
 else
 if [ $bwa_aln -eq 1 ]; then
-bwa sampe -P -c 0.001 $myref $outputfolder/aln/"$samplename"_1.sai $outputfolder/aln/"$samplename"_2.sai $reads_1 $reads_2 | $ericscriptfolder/lib/perl/xa2multi.pl > $outputfolder/aln/"$samplename".sam
+bwa sampe -P -c 0.001 $myref $outputfolder/aln/"$samplename"_1.sai $outputfolder/aln/"$samplename"_2.sai $reads_1 $reads_2 | $ericscriptfolder/xa2multi.pl > $outputfolder/aln/"$samplename".sam
 else
-bwa mem -Y -t $nthreads $myref $reads_1 $reads_2 | $ericscriptfolder/lib/perl/xa2multi.pl > $outputfolder/aln/"$samplename".sam
+bwa mem -Y -t $nthreads $myref $reads_1 $reads_2 | $ericscriptfolder/xa2multi.pl > $outputfolder/aln/"$samplename".sam
 fi
 fi
 fi
 fi
 printf "done. \n"
-R --slave --args $outputfolder,$bwa_aln <  $ericscriptfolder/lib/R/ExtractInsertSize.R
+R --slave --args $outputfolder,$bwa_aln <  $ericscriptfolder/ExtractInsertSize.R
 printf "[EricScript] Extracting discordant alignments ... "
 grep -v '^@' $outputfolder/aln/"$samplename".sam | awk -v mapq="$MAPQ" '(($7!="=") && ($7!="*") && ($5>=mapq)) { print }' | cut -f2,3,4,5,7,8 > $outputfolder/out/"$samplename".filtered.out
-R --slave --args $samplename,$outputfolder,$ericscriptfolder,$minreads,$MAPQ,$refid,$dbfolder < $ericscriptfolder/lib/R/MakeAdjacencyMatrix.R
+R --slave --args $samplename,$outputfolder,$ericscriptfolder,$minreads,$MAPQ,$refid,$dbfolder < $ericscriptfolder/MakeAdjacencyMatrix.R
 myflag=`cat $outputfolder/out/.ericscript.flag`
 if [ $myflag -eq 0 ]; then
 printf "done. \n"
 printf "[EricScript] No chimeric transcripts found! Writing results ..."
-R --slave --args $samplename,$outputfolder <  $ericscriptfolder/lib/R/MakeEmptyResults.R
+R --slave --args $samplename,$outputfolder <  $ericscriptfolder/MakeEmptyResults.R
 printf "done. \n"
 exit 1
 fi
 printf "done. \n"
 printf "[EricScript] Building exon junction reference ... "
-R --slave --args $samplename,$outputfolder,$ericscriptfolder,$readlength,$refid,$dbfolder < $ericscriptfolder/lib/R/BuildFasta.R
+R --slave --args $samplename,$outputfolder,$ericscriptfolder,$readlength,$refid,$dbfolder < $ericscriptfolder/BuildFasta.R
 printf "done. \n"
 ## Aligning to putative junction reference
 if [ $verbose -eq 0 ]; then
@@ -151,7 +151,7 @@ bwa sampe -P $mynewref $outputfolder/aln/"$samplename"_1.remap.sai $outputfolder
 else
 bwa mem -Y -t $nthreads $mynewref $reads_1 $reads_2 > $outputfolder/aln/tmp.sam 2>> $outputfolder/out/.ericscript.log
 fi
-cat $outputfolder/aln/tmp.sam | $ericscriptfolder/lib/perl/xa2multi.pl > $outputfolder/aln/$samplename.remap.sam
+cat $outputfolder/aln/tmp.sam | $ericscriptfolder/xa2multi.pl > $outputfolder/aln/$samplename.remap.sam
 fi
 samtools view -@ $nthreads -bS -o $outputfolder/aln/$samplename.remap.bam $outputfolder/aln/$samplename.remap.sam 1>> $outputfolder/out/.ericscript.log 2>> $outputfolder/out/.ericscript.log
 samtools sort -@ $nthreads $outputfolder/aln/$samplename.remap.bam $outputfolder/aln/$samplename.remap.sorted 1>> $outputfolder/out/.ericscript.log 2>> $outputfolder/out/.ericscript.log
@@ -171,9 +171,9 @@ bwa mem -t $nthreads $mynewref $reads_1 $reads_2 > $outputfolder/aln/$samplename
 fi
 else
 if [ $bwa_aln -eq 1 ]; then
-bwa sampe -P $mynewref $outputfolder/aln/"$samplename"_1.remap.sai $outputfolder/aln/"$samplename"_2.remap.sai $reads_1 $reads_2 | $ericscriptfolder/lib/perl/xa2multi.pl > $outputfolder/aln/$samplename.remap.sam 
+bwa sampe -P $mynewref $outputfolder/aln/"$samplename"_1.remap.sai $outputfolder/aln/"$samplename"_2.remap.sai $reads_1 $reads_2 | $ericscriptfolder/xa2multi.pl > $outputfolder/aln/$samplename.remap.sam 
 else
-bwa mem -Y -t $nthreads $mynewref $reads_1 $reads_2 | $ericscriptfolder/lib/perl/xa2multi.pl > $outputfolder/aln/$samplename.remap.sam
+bwa mem -Y -t $nthreads $mynewref $reads_1 $reads_2 | $ericscriptfolder/xa2multi.pl > $outputfolder/aln/$samplename.remap.sam
 fi
 fi
 samtools view -@ $nthreads -bS -o $outputfolder/aln/$samplename.remap.bam $outputfolder/aln/$samplename.remap.sam
@@ -183,7 +183,7 @@ fi
 printf "done. \n"
 ## Recalibrating junctions
 printf "[EricScript] Recalibrating junctions ... "
-R --slave --args $samplename,$outputfolder,$readlength,$verbose < $ericscriptfolder/lib/R/RecalibrateJunctions.R
+R --slave --args $samplename,$outputfolder,$readlength,$verbose < $ericscriptfolder/RecalibrateJunctions.R
 cat $outputfolder/out/$samplename.EricScript.junctions.recalibrated.fa $myref > $mynewref_recal
 printf "done. \n"
 ## Aligning not properly mapped reads
@@ -197,7 +197,7 @@ bwa sampe -P $mynewref_recal $outputfolder/aln/"$samplename"_1.remap.recal.sai $
 else
 bwa mem -Y -t $nthreads $mynewref_recal $reads_1 $reads_2 > $outputfolder/aln/tmp.sam 2>> $outputfolder/out/.ericscript.log
 fi
-cat $outputfolder/aln/tmp.sam | $ericscriptfolder/lib/perl/xa2multi.pl > $outputfolder/aln/$samplename.remap.recal.sam
+cat $outputfolder/aln/tmp.sam | $ericscriptfolder/xa2multi.pl > $outputfolder/aln/$samplename.remap.recal.sam
 samtools view -@ $nthreads -bt $mynewref_recal -o $outputfolder/aln/$samplename.remap.recal.bam $outputfolder/aln/$samplename.remap.recal.sam 1>> $outputfolder/out/.ericscript.log 2>> $outputfolder/out/.ericscript.log
 samtools sort -@ $nthreads $outputfolder/aln/$samplename.remap.recal.bam $outputfolder/aln/$samplename.remap.recal.sorted 1>> $outputfolder/out/.ericscript.log 2>> $outputfolder/out/.ericscript.log
 samtools rmdup $outputfolder/aln/$samplename.remap.recal.sorted.bam $outputfolder/aln/$samplename.remap.recal.sorted.rmdup.bam 1>> $outputfolder/out/.ericscript.log 2>> $outputfolder/out/.ericscript.log
@@ -210,9 +210,9 @@ bwa index  $mynewref_recal
 if [ $bwa_aln -eq 1 ]; then
 bwa aln -R 5 -t $nthreads $mynewref_recal $reads_1 > $outputfolder/aln/"$samplename"_1.remap.recal.sai 
 bwa aln -R 5 -t $nthreads $mynewref_recal $reads_2 > $outputfolder/aln/"$samplename"_2.remap.recal.sai 
-bwa sampe -P $mynewref_recal $outputfolder/aln/"$samplename"_1.remap.recal.sai $outputfolder/aln/"$samplename"_2.remap.recal.sai $reads_1 $reads_2 | $ericscriptfolder/lib/perl/xa2multi.pl > $outputfolder/aln/$samplename.remap.recal.sam 
+bwa sampe -P $mynewref_recal $outputfolder/aln/"$samplename"_1.remap.recal.sai $outputfolder/aln/"$samplename"_2.remap.recal.sai $reads_1 $reads_2 | $ericscriptfolder/xa2multi.pl > $outputfolder/aln/$samplename.remap.recal.sam 
 else
-bwa mem -Y -t $nthreads $mynewref_recal $reads_1 $reads_2 | $ericscriptfolder/lib/perl/xa2multi.pl > $outputfolder/aln/$samplename.remap.recal.sam
+bwa mem -Y -t $nthreads $mynewref_recal $reads_1 $reads_2 | $ericscriptfolder/xa2multi.pl > $outputfolder/aln/$samplename.remap.recal.sam
 fi
 samtools view -@ $nthreads -bt $mynewref_recal -o $outputfolder/aln/$samplename.remap.recal.bam $outputfolder/aln/$samplename.remap.recal.sam 
 samtools sort -@ $nthreads $outputfolder/aln/$samplename.remap.recal.bam $outputfolder/aln/$samplename.remap.recal.sorted
@@ -226,12 +226,12 @@ samtools idxstats $outputfolder/aln/$samplename.remap.recal.sorted.rmdup.q1.bam 
 rm $outputfolder/aln/*.sam
 ## Estimating spanning reads
 printf "[EricScript] Scoring candidate fusions ..."
-R --slave --args $samplename,$outputfolder,$readlength <  $ericscriptfolder/lib/R/EstimateSpanningReads.R
+R --slave --args $samplename,$outputfolder,$readlength <  $ericscriptfolder/EstimateSpanningReads.R
 myflag=`cat $outputfolder/out/.ericscript.flag`
 if [ $myflag -eq 0 ]; then
 printf "done. \n"
 printf "[EricScript] No chimeric transcripts found! Writing results ..."
-R --slave --args $samplename,$outputfolder <  $ericscriptfolder/lib/R/MakeEmptyResults.R
+R --slave --args $samplename,$outputfolder <  $ericscriptfolder/MakeEmptyResults.R
 printf "done. \n"
 exit 1
 fi
@@ -243,18 +243,18 @@ else
 samtools mpileup -A -f $mynewref_recal -l $outputfolder/out/$samplename.intervals $outputfolder/aln/$samplename.remap.recal.sorted.rmdup.bam > $outputfolder/out/$samplename.remap.recal.sorted.rmdup.pileup
 fi
 cut -f1,2,3 $outputfolder/out/$samplename.remap.recal.sorted.rmdup.pileup | grep -e '[0-9]----[a-z | A-Z]' - >  $outputfolder/out/$samplename.intervals.pileup
-R --slave --args $samplename,$outputfolder <  $ericscriptfolder/lib/R/BuildNeighbourhoodSequences.R
+R --slave --args $samplename,$outputfolder <  $ericscriptfolder/BuildNeighbourhoodSequences.R
 if [ $verbose -eq 0 ]; then
 blat $myref $outputfolder/out/.link $outputfolder/out/$samplename.checkselfhomology.blat -out=blast8 1>> $outputfolder/out/.ericscript.log
 else
 blat $myref $outputfolder/out/.link $outputfolder/out/$samplename.checkselfhomology.blat -out=blast8
 fi
-R --slave --args $samplename,$outputfolder <  $ericscriptfolder/lib/R/CheckSelfHomology.R
+R --slave --args $samplename,$outputfolder <  $ericscriptfolder/CheckSelfHomology.R
 myflag=`cat $outputfolder/out/.ericscript.flag`
 if [ $myflag -eq 0 ]; then
 printf "done. \n"
 printf "[EricScript] No chimeric transcripts found! Writing results ..."
-R --slave --args $samplename,$outputfolder <  $ericscriptfolder/lib/R/MakeEmptyResults.R
+R --slave --args $samplename,$outputfolder <  $ericscriptfolder/MakeEmptyResults.R
 printf "done. \n"
 exit 1
 fi
@@ -265,7 +265,7 @@ printf "[EricScript] Writing results ... "
 else
 printf "[EricScript] Writing results ... \n"
 fi
-R --slave --args $samplename,$outputfolder,$ericscriptfolder,$readlength,$verbose,$refid,$dbfolder <  $ericscriptfolder/lib/R/MakeResults.R
+R --slave --args $samplename,$outputfolder,$ericscriptfolder,$readlength,$verbose,$refid,$dbfolder <  $ericscriptfolder/MakeResults.R
 printf "done. \n"
 rm $outputfolder/out/*fai
 if [ $removetemp -eq 1 ]; then

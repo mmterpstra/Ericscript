@@ -5,6 +5,11 @@
 Fork created by mmterpstra@github.com due to inactivity on the original forum. The version the files from is v0.5.5. 
 This goals: run a minimal install/test on travis if possible. Feel free to submit a pull request if you think you can fix it faster and better.
 
+Original project links:
+ - https://sites.google.com/site/bioericscript/
+ - https://sourceforge.net/projects/ericscript/
+ - https://groups.google.com/forum/#!forum/ericscript
+
 Please feel free to email the author if you have any questions or issues.
 matteo.benelli AT gmail.com
 
@@ -17,13 +22,13 @@ EricScript uses the BWA aligner to perform the mapping on the transcriptome refe
 
 Download and install the following software
 
-- R: http://cran.r-project.org/
-- "ada" R package: http://cran.r-project.org/web/packages/ada/index.html
-- BWA: http://bio-bwa.sourceforge.net
-- SAMtools (>0.1.17): http://samtools.sourceforge.net/
+- R (~3.4.4): http://cran.r-project.org/
+- "ada" R package (~2.0-3): http://cran.r-project.org/web/packages/ada/index.html
+- BWA (~0.7.15): http://bio-bwa.sourceforge.net
+- SAMtools (>0.1.17 <=0.1.19): http://samtools.sourceforge.net/
 - bedtools (>2.15): http://code.google.com/p/bedtools/
-- BLAT binaries: http://genome-test.cse.ucsc.edu/~kent/exe/
-- seqtk: https://github.com/lh3/seqtk
+- BLAT (~3.5) binaries: http://genome-test.cse.ucsc.edu/~kent/exe/
+- seqtk (~1.2): https://github.com/lh3/seqtk
 
 > Be sure that all of these programs are included in your PATH.
 

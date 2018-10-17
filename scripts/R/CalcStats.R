@@ -12,7 +12,7 @@ readlength <- as.numeric(split.vars[6])
 normroc <- as.numeric(split.vars[7])
 ericscriptfolder <- as.character(split.vars[8])
 
-source(file.path(ericscriptfolder, "lib", "R", "ImportResults.R"))
+source(file.path(ericscriptfolder, "ImportResults.R"))
 
 trapezint <- function (x, y, a, b)  {
 ## function of the ROC package (http://bioconductor.org) 
