@@ -51,7 +51,7 @@ To get information about running EricScript, digit:
 In order to perform chimeric transcript detection, you need to download and build the Ensembl Database of a genome. To list the available genomes, digit:
 
 ```
-/PATH/TO/ERIC/ericscript.pl --printdb
+/PATH/TO/ERIC/ericscript.pl --printdb -db /PATH/TO/YOUR/DBFOLDER
 ```
 
 After a reference id is selected, you need to download and build the corresponding Ensembl Database. In the example below, it's shown how to prepare the database for saccharomyces cerevisiae.
@@ -60,7 +60,7 @@ After a reference id is selected, you need to download and build the correspondi
 /PATH/TO/ERIC/ericscript.pl --downdb --refid saccharomyces_cerevisiae -db /PATH/TO/YOUR/DBFOLDER
 ```
 
-You can also select a specific ensembl release (>= 70) to download 
+You can also select a specific ensembl release (>= 70 <=82) to download 
 
 ```
 /PATH/TO/ERIC/ericscript.pl --downdb --refid saccharomyces_cerevisiae -db /PATH/TO/YOUR/DBFOLDER --ensversion 74
@@ -75,7 +75,7 @@ To run EricScript with default parameters (if parameter "refid" is not specified
 You can check if your database is up-to-date by the following:
 
 ```
-/PATH/TO/ERIC/ericscript.pl --checkdb
+/PATH/TO/ERIC/ericscript.pl --checkdb -db /PATH/TO/YOUR/DBFOLDER
 
 ```
 
